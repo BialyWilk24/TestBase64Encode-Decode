@@ -1,17 +1,20 @@
 class pageDecoder {
     constructor() {
         this.url = 'https://base64.guru/converter/decode/image';
+        this.selectors = {
+            decodeTextArea: `textarea[name="base64"]`,
+            decodeBtn: `button[name="decode"]`,
+            imagePreview: 'img[onload="form_base64_decode_preview(this)"]',
+            errorMessageSelector: '.form-messages-errors'
+        };
     }
-    decodeTextArea = `textarea[name="base64"]`;
-    decodeBtn = `button[name="decode"]`;
-    imagePreview = 'img[onload="form_base64_decode_preview(this)"]';
-    errorMessageSelector = '.form-messages-errors';
+
     visit() {
         cy.visit(this.url);
         return this;
     }
     enterBase64(base64) {
-        cy.get(this.decodeTextArea)
+        cy.get(this.selectors.decodeTextArea)
             .as('DecodeTextArea')
             .should('exist')
             .should('be.visible')
@@ -21,7 +24,7 @@ class pageDecoder {
         return this;
     }
     clickDecodeBtn() {
-        cy.get(this.decodeBtn)
+        cy.get(this.selectors.decodeBtn)
             .should('be.visible')
             .should('contain.text', 'Decode Base64 to Image')
             .click();
@@ -29,7 +32,7 @@ class pageDecoder {
     }
     checkImageDecoded(base64) {
         cy.get('body').then(($body) => {
-            const $image = $body.find(this.imagePreview);
+            const $image = $body.find(this.selectors.imagePreview);
 
             if ($image.length > 0) {
                 cy.wrap($image)
@@ -39,7 +42,7 @@ class pageDecoder {
                     .and('include', base64);
             } else {
                 cy.log('Error: Image is not decoded');
-                cy.get(this.errorMessageSelector, { timeout: 3000 })
+                cy.get(this.selectors.errorMessageSelector, { timeout: 3000 })
                     .should('be.visible')
                     .and(
                         'contain.text',

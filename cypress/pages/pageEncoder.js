@@ -1,31 +1,33 @@
 class pageEncoder {
     constructor() {
         this.url = 'https://www.base64-image.de/';
+        this.selectors = {
+            dragAndDropField: '#drag-target',
+            fileInput: 'body > input[type="file"]',
+            copyImageBtn: '.dz-copy-image.btn-xs',
+            allowCookiesBtn: '#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll'
+        };
     }
-    allowCookiesBtn = '#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll';
-    dragAndDropField = '#drag-target';
-    fileInput = 'body > input[type="file"]';
-    copyImageBtn = '.dz-copy-image.btn-xs';
 
     visit() {
         cy.visit(this.url);
         return this;
     }
     allowCookies() {
-        cy.get(this.allowCookiesBtn)
+        cy.get(this.selectors.allowCookiesBtn)
             .should('be.visible')
             .should('contain.text', 'Allow all')
             .click();
         return this;
     }
     checkdragAndDropFiled() {
-        cy.get(this.dragAndDropField)
+        cy.get(this.selectors.dragAndDropField)
             .should('be.visible')
             .click();
         return this;
     }
     uploadFile(fileName) {
-        cy.get(this.fileInput).attachFile(fileName);
+        cy.get(this.selectors.fileInput).attachFile(fileName);
         return this;
     }
     interceptApiRequest() {
@@ -49,7 +51,7 @@ class pageEncoder {
         return this;
     }
     copyImage() {
-        cy.get(this.copyImageBtn)
+        cy.get(this.selectors.copyImageBtn)
             .as('copyImageBtn')
             .should('be.visible')
             .should('contain.text', 'copy image')
